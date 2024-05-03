@@ -11,15 +11,15 @@ matplotlib.use('Agg')
 
 
 #get openaiapikey from environment variable
-openaiapikey = os.environ.get('OPENAI_API_KEY')
-
-#install open-interpreter package
-os.system(f"pip install open-interpreter")
+#openaiapikey = os.environ.get('OPENAI_API_KEY')
 
 interpreter.auto_run = True
 interpreter.llm.model = "gpt-4-turbo"
 interpreter.custom_instructions = "First ask the user what they want to do. Based on the input, describe the next steps. If user agrees, proceed; if not, ask what they want next.If it is anything to display , always at the end open up the file."
 
+def set_api_key(api_key):
+    os.environ['OPENAI_API_KEY'] = api_key
+    return "API Key set successfully."
 def json_to_markdown(json_data):
     full_message = ""
     images = []
@@ -49,6 +49,14 @@ def update_images(image_component):
 
 def create_chat_widget():
     with gr.Blocks() as chatblock:
+        gr.Markdown("Please note: Responses and updates may take some time to process.")
+
+
+        gr.Markdown("Enter your OpenAI API key:")
+        api_key_input = gr.Textbox()
+        set_api_key_button = gr.Button("Set API Key")
+        set_api_key_button.click(set_api_key, inputs=api_key_input, outputs=None)
+        
         # Declare chatbot and txt here so they are accessible later
         chatbot = gr.Chatbot(
             [],
